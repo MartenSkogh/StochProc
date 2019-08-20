@@ -158,23 +158,32 @@ log_likliehood <- function(x, y, theta) {
     sum(-log(sqrt(2 * pi) * theta[3]) - (y - model(x, theta))**2 / (2 * theta[3]**2))
 }
 
-range = seq(0,10, length=100)
+range = seq(0,10, length=1000)
 ans <- vector(, length(range))
 for (i in 1:length(range)) {
-    theta <- c(range[i], 2 * pi * 0.8, 1)
+    theta <- c(range[i], 5.02, 1.15)
     ans[i] <- log_likliehood(x, y, theta)
 }
 plot(range,ans)
-max(ans)
+which.max(ans)
 
-range = seq(0, 10, length=100)
+range = seq(0, 10, length=1000)
 ans <- vector(, length(range))
 for (i in 1:length(range)) {
-    theta <- c(5.1, range[i], 1)
+    theta <- c(5.08, range[i], 1.15)
     ans[i] <- log_likliehood(x, y, theta)
 }
 plot(range,ans)
-max(ans)
+which.max(ans)
+
+range = seq(0, 10, length=1000)
+ans <- vector(, length(range))
+for (i in 1:length(range)) {
+    theta <- c(5.08, 5.02, range[i])
+    ans[i] <- log_likliehood(x, y, theta)
+}
+plot(range,ans)
+which.max(ans)
 
 # 2. (e) -----------------------
 metropolis_hastings <- function(steps) {
