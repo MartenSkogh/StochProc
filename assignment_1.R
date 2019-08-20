@@ -3,7 +3,7 @@ library('expm')
 
 # Excersize 1.35 ----------------------------
 accidents <- function() {
-   poisson_param <- sample(0:3,1)
+   poisson_param <- runif(1,0,3)
    rpois(1, poisson_param)
 }
 
