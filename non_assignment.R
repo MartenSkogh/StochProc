@@ -1,3 +1,6 @@
+install.packages('expm')
+library('expm')
+
 # Example 6.2 -------------------------
 ppois(200,2*100) 
 
@@ -63,3 +66,68 @@ intensity <- function(t) {
 
 expected_nbr_students <- integrate(intensity, lower=0.5, upper=2.5)$value
 1 - ppois(399,expected_nbr_students)
+
+# Example 7.25 ------------------------
+
+# 1. 
+rate <- 6
+mu <- 2
+c <- 5
+
+1 / (sum(((rate / mu)**(0:(c - 1)) / factorial(0:(c - 1)))) 
+    + (rate / mu)**5 / factorial(5) * (1 / (1 - (rate / (mu * c)))))
+
+# 2. 
+
+
+# Example 7.27
+death_rate <- 2
+
+Q <- c(-1,  1,  0,  0,  0,  0,
+        2, -4,  2,  0,  0,  0,
+        0,  2, -5,  3,  0,  0,
+        0,  0,  2, -6,  4,  0,
+        0,  0,  0,  2, -7,  5,
+        0,  0,  0,  0,  2, -2)
+
+Q <- matrix(Q, nrow=6, byrow=TRUE)
+colnames(Q) <- as.character(0:5)
+rownames(Q) <- as.character(0:5)
+
+max_q <- max(abs(Q))
+
+R <- Q/max_q + diag(6)
+
+error <- Inf
+limit <- 0.5E-4
+N <- 0
+
+while (error >= limit) {
+    N <- N + 1
+    error <- 1 - ppois(N, max(abs(Q)) * 1.5)
+}
+
+partial_sums <- array(0, c(6,6,N+1))
+prob_1_5 <- array(0, c(6,6))
+
+colnames(prob_1_5) <- as.character(0:5)
+rownames(prob_1_5) <- as.character(0:5)
+
+for (k in 0:N) {
+    #partial_sums[,,k+1] <- (R ** k) * dpois(k, max_q * 1.5)
+    #prob_1_5 <- prob_1_5 + partial_sums[,,k+1]
+    prob_1_5 <- prob_1_5 + (R %^% k) * dpois(k, max_q * 1.5)
+}
+
+comparison <- expm(1.5 * Q)
+diff <- comparison - prob_1_5
+
+# Example 8.2 ------------------------
+pnorm(2, 0, sqrt(3))
+
+# Example 8.8 ------------------------
+(4 / qnorm(0.95, 0, 1))**2
+
+
+# Example 8.10 -----------------------
+pnorm(0.6,0,1) - pnorm(-1.4,0,1)

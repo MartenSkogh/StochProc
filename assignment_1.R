@@ -1,21 +1,23 @@
+install.packages('expm')
+library('expm')
+
 # Excersize 1.35 ----------------------------
 accidents <- function() {
    poisson_param <- sample(0:3,1)
    rpois(1, poisson_param)
 }
 
-
 number_days <- 100000
 nbr_accidents <- replicate(number_days, accidents())
 
-print("Mean number of accidents:")
-print(mean(nbr_accidents))
+sprintf("Mean number of accidents per day: %f", mean(nbr_accidents))
 
-print("Accident variance:")
-print(var(nbr_accidents))
+sprintf("Variance in number of accidents per day: %f", var(nbr_accidents))
 
 hist(nbr_accidents,
-     breaks=(-0.5:(max(nbr_accidents)+0.5)))
+     breaks=(-0.5:(max(nbr_accidents)+0.5)),
+     main='Frequency of Daily Accidents',
+     xlab='Number of Accidents')
 
 # Exercise 2.27 ------------------------------
 
@@ -47,12 +49,9 @@ trials <- 100000
 simlist <- replicate(trials, gamble(k,n,p))
 win_mean <- mean(simlist)
 
-print("Expected risk of ruin:")
-print(1 - win_mean)
+sprintf("Expected risk of ruin: %f", 1 - win_mean)
 
 # (b)
-library('expm')
-
 init_state = c(0, 0, 1, 0, 0, 0)
 
 trans_prob <- c(  1,   0,   0,   0,   0,   0,
@@ -70,8 +69,13 @@ n <- 100
 
 final_prob <- init_state %*% (P %^% n)
 
-print("Longterm probability for ruin:")
-print(final_prob[1])
+sprintf("Longterm probability for ruin: %f", final_prob[1])
+
+# (c)
+
+exact_prob = (n - k)/n
+sprintf("Exact probability: %f", exact_prob)
+
 
 # Exercise 3.52 -------------------------------
 
@@ -98,8 +102,7 @@ a <- F %*% rep(1,6)
 
 colnames(a) <- c("9")
 
-print("Expected number of steps to win finish the game (0->9):")
-print(a[1])
+sprintf("Expected number of steps to win finish the game (0->9): %f", (a[1]))
 
 # (b) See example 3.29.
 
@@ -117,5 +120,5 @@ a <- F %*% R
 
 #colnames(a) <- c("3", "9")
 
-print("Probability of passing through 3 if starting on 6:")
-print(a["6","3"])
+sprintf("Probability of passing through 3 if starting on 6: %f", a["6","3"])
+sprintf("Probability of not passing through 3 if starting on 6: %f", a["6","9"])
