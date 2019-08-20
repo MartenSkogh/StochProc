@@ -160,9 +160,12 @@ log_likliehood <- function(x, y, theta) {
 
 range = 1:12
 for (i in range) {
+    print(i)
     ans <- vector(, length(range))
-    theta <- c(i, 2 * pi * 0.8, 1)
+    theta <- c(2, 2 * pi * 0.8, 1)
     ans[i] <- log_likliehood(x, y, theta)
 }
+
+ans
 
 log_likliehood(x, y)
