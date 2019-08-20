@@ -146,26 +146,68 @@ plot(x,y)
 epsilon <- rnorm(23,0,1)
 theta <- c(6, 2 * pi * 0.8, 1)
 
-model <- function(x, theta, epsilon) {
-    theta[1] * sin(x / theta[2]) + theta[3] * epsilon
+model <- function(x, theta) {
+    theta[1] * sin(x / theta[2]) + theta[3] * runif(1)
 }
 plot(x,y)
-lines(x, model(x, theta, epsilon), col="red")
+lines(x, model(x, theta), col="red")
 
 # 2. (c) -----------------------
 
 log_likliehood <- function(x, y, theta) {
-    sum(-log(sqrt(2 * pi) * theta[3]) - (y - model(x, theta, 0)) / (2 * theta[3]**2))
+    sum(-log(sqrt(2 * pi) * theta[3]) - (y - model(x, theta))**2 / (2 * theta[3]**2))
 }
 
-range = 1:12
-for (i in range) {
-    print(i)
-    ans <- vector(, length(range))
-    theta <- c(2, 2 * pi * 0.8, 1)
+range = seq(0,10, length=100)
+ans <- vector(, length(range))
+for (i in 1:length(range)) {
+    theta <- c(range[i], 2 * pi * 0.8, 1)
     ans[i] <- log_likliehood(x, y, theta)
 }
+plot(range,ans)
+max(ans)
 
-ans
+range = seq(0, 10, length=100)
+ans <- vector(, length(range))
+for (i in 1:length(range)) {
+    theta <- c(5.1, range[i], 1)
+    ans[i] <- log_likliehood(x, y, theta)
+}
+plot(range,ans)
+max(ans)
 
-log_likliehood(x, y)
+# 2. (e) -----------------------
+metropolis_hastings <- function(steps) {
+    accepted <- 0
+    theta <- array(0, dim = c(steps ,3))
+    theta[1,] <- c(6, 2 * pi * 0.8, 1) # Initial value
+    
+    proposal_function <- function(theta) {abs(theta + rnorm(3, 0, 0.1))}
+
+    for (i in 2:steps) {
+        # Generate
+        proposal_value <- proposal_function(theta[i - 1,])
+        # Calculate
+        p <- log_likliehood(x, y, proposal_value) / log_likliehood(x, y, theta[i - 1,])
+        if (p > runif(1)) { # Accept
+            theta[i,] <- proposal_value
+            accepted <- accepted + 1
+        } else { # Reject
+            theta[i,] <- theta[i - 1,]
+        }
+    }
+    return(list(accepted/steps, theta))
+}
+
+steps <- 1000
+a <- metropolis_hastings(steps)
+acc_rate <- a[[1]]
+theta_trace <- a[[2]] 
+
+plot(theta_trace[,1], type='l', main='Theta_1')
+plot(theta_trace[,2], type='l', main='Theta_2')
+plot(theta_trace[,3], type='l', main='Theta_3')
+
+
+# 2. (f) ------------------
+pnorm(0, model(15, c(theta_trace[steps,1], theta_trace[steps,2], 0)), theta_trace[steps,3])
