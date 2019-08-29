@@ -1,5 +1,7 @@
 # Assignment 3 
 # Stochastic Processes and Bayesian Inference
+install.packages("mcsm")
+library("mcsm")
 
 print("Assignment 3")
 print("Mårten Skogh")
@@ -103,17 +105,57 @@ durations <- c(6.83, 4.01, 1.63, 0.44, 5.11, 0.29, 2.87, 1.30, 4.76, 1.92)
 
 nbr_times_in_state <- rep(0, 3)
 tot_stay <- rep(0, 3)
-nbr_trans <- matrix(rep(0, 9), ncol = 3, byrow = TRUE)
+counts <- matrix(rep(0, 9), ncol = 3, byrow = TRUE)
 
 for (i in 1:length(states)) {
     nbr_times_in_state[states[i]] <- nbr_times_in_state[states[i]] + 1
-    tot_stay[state[i]] <- tot_stay[state[i]] + durations[i]
-    if (i < length(state)) {
-        nbr_trans[states[i],states[i+1]] <- nbr_trans[states[i], states[i+1]] + 1
+    tot_stay[states[i]] <- tot_stay[states[i]] + durations[i]
+    if (i < length(states)) {
+        counts[states[i],states[i+1]] <- counts[states[i], states[i+1]] + 1
     }
 }
 
-mean_stay <- tot_stay / nbr_times_in_state
 
-print(nbr_trans)
-print(mean_stay)
+
+print(counts)
+
+q_posterior_means <- tot_stay / nbr_times_in_state
+P_posterior_means <- matrix(
+                            c(  0, 1/2, 1/2,
+                              1/2,   0, 1/2,
+                              5/8, 3/8,   0),
+                            ncol = 3,
+                            byrow = TRUE)
+
+print(P_posterior_means)
+print(P_posterior_means[1,])
+
+get_trans_matrix <- function(posterior) {
+    P <- matrix(c(  0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0),
+                ncol = 3,
+                byrow = TRUE)
+
+     P[1,] <- rdirichlet(1, posterior[1,])
+     P[2,] <- rdirichlet(1, posterior[2,])
+     P[3,] <- rdirichlet(1, posterior[3,])
+
+     return(P)
+}
+
+get_q_vector <- function(tot_stay, nbr_times_in_state) {
+    q <- c(0,0,0)
+    q[1] <- rgamma(1, tot_stay[1], nbr_times_in_state[1])
+    q[2] <- rgamma(1, tot_stay[2], nbr_times_in_state[2])
+    q[3] <- rgamma(1, tot_stay[3], nbr_times_in_state[3])
+    return(q)
+}
+
+q <- get_q_vector(tot_stay, nbr_times_in_state)
+P <- get_trans_matrix(P_posterior_means)
+Q <- P * q - diag(3) * rowSums(P * q)
+
+print(q)
+print(P)
+print(Q)
