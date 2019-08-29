@@ -3,14 +3,14 @@
 install.packages("mcsm")
 library("mcsm")
 
-print("Assignment 3")
-print("Mårten Skogh")
-print("")
+writeLines("==================================")
+writeLines("\n\tAssignment 3\n\tMårten Skogh\n")
+writeLines("==================================")
 
-par(mfrow=c(2,1))
+#par(mfrow=c(2,1))
 
 # 1. (a) ---------------------
-print("===== Question 1. (a) =====")
+writeLines("\n===== Question 1. (a) =====\n")
 pois_param <- 36
 area <- 0.4 * 0.4
 
@@ -20,7 +20,7 @@ print(sprintf("Probability of six or more trees in area %f is: %f", area, prob_6
 
 
 # 1. (b) -------------------
-print("===== Question 1. (b) =====")
+writeLines("\n===== Question 1. (b) =====\n")
 # Non-overlapping areas are uncorrelated
 
 NB <- 0:4
@@ -35,7 +35,7 @@ prob <- sum(probs)
 print(sprintf("Probability of 4 trees in both areas is: %f", prob))
 
 # 1. (c) -------------------
-print("===== Question 1. (c) =====")
+writeLines("\n===== Question 1. (c) =====\n")
 nbr_trees <- rpois(1, pois_param)
 x <- runif(nbr_trees)
 y <- runif(nbr_trees)
@@ -43,15 +43,16 @@ y <- runif(nbr_trees)
 plot(x, y, main="Constant posterior")
 
 # 1. (d) -------------------
-print("===== Question 1. (d) =====")
+writeLines("\n===== Question 1. (d) =====\n")
 nbr_trees <- rpois(1, rgamma(1, 36, 1))
 x <- runif(nbr_trees)
 y <- runif(nbr_trees)
 
+dev.new()
 plot(x, y, main="Gamma posterior")
 
 # 1. (e) -------------------
-print("===== Question 1. (e) =====")
+writeLines("\n===== Question 1. (e) =====\n")
 min_dist <- function(x, y) {
     X <- rep(x, times = length(x))
     X <- matrix(X, nrow = length(x), byrow=TRUE)
@@ -78,10 +79,10 @@ avg_min_dist <- sum_avg / trials
 print(sprintf("Average minimum distance is: %f", avg_min_dist))
 
 # 1. (f) -------------------
-print("===== Question 1. (f) =====")
+writeLines("\n===== Question 1. (f) =====\n")
 
 # 2. (a) -------------------
-print("===== Question 2. (a) =====")
+writeLines("\n===== Question 2. (a) =====\n")
 q <- c(1/5, 1, 1/2)
 
 p <- c(  0, 0.5, 0.5,
@@ -91,15 +92,15 @@ p <- c(  0, 0.5, 0.5,
 p <- matrix(p, ncol = 3, byrow=TRUE)
 Q <- p * q - diag(3) * rowSums(p * q)
 
-print("Q:")
+writeLines("Q:")
 print(Q)
 v <- solve(rbind(t(Q[,1:2]),c(1,1,1)), c(0,0,1))
-print("Stationary solution:")
+writeLines("\nStationary solution:")
 print(v)
 
 
 # 2. (b) -------------------
-print("===== Question 2. (b) =====")
+writeLines("\n===== Question 2. (b) =====\n")
 states <- c(1, 3, 2, 3, 1, 2, 1, 3, 1, 2)
 durations <- c(6.83, 4.01, 1.63, 0.44, 5.11, 0.29, 2.87, 1.30, 4.76, 1.92)
 
@@ -116,7 +117,7 @@ for (i in 1:length(states)) {
 }
 
 
-
+writeLines("Count matrix:")
 print(counts)
 
 q_posterior_means <- tot_stay / nbr_times_in_state
@@ -127,8 +128,8 @@ P_posterior_means <- matrix(
                             ncol = 3,
                             byrow = TRUE)
 
+writeLines("\nP posterior:")
 print(P_posterior_means)
-print(P_posterior_means[1,])
 
 get_trans_matrix <- function(posterior) {
     P <- matrix(c(  0, 0, 0,
@@ -156,6 +157,9 @@ q <- get_q_vector(tot_stay, nbr_times_in_state)
 P <- get_trans_matrix(P_posterior_means)
 Q <- P * q - diag(3) * rowSums(P * q)
 
+writeLines("\nq-vector:")
 print(q)
+writeLines("\nTransition matrix:")
 print(P)
+writeLines("\nInfinitesimal generator matrix:")
 print(Q)
