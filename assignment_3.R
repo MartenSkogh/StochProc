@@ -4,7 +4,7 @@ install.packages("mcsm")
 library("mcsm")
 
 writeLines("==================================")
-writeLines("\n\tAssignment 3\n\tMårten Skogh\n")
+writeLines("\n\tAssignment 3\n\tMarten Skogh\n")
 writeLines("==================================")
 
 #par(mfrow=c(2,1))

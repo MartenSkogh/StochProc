@@ -1,3 +1,10 @@
+# Assignment 1 
+# Stochastic Processes and Bayesian Inference
+
+writeLines("==================================")
+writeLines("\n\tAssignment 2\n\tMarten Skogh\n")
+writeLines("==================================")
+
 # 1. (a) ----------------
 
 population <- c(1, 1, 2, 5, 7)
