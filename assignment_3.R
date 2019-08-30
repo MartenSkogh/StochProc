@@ -15,7 +15,6 @@ pois_param <- 36
 area <- 0.4 * 0.4
 
 prob_6_or_more <- 1 - ppois(6, pois_param * area)
-
 print(sprintf("Probability of six or more trees in area %f is: %f", area, prob_6_or_more))
 
 

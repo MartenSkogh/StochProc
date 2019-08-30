@@ -1,5 +1,11 @@
+# Assignment 3 
+# Stochastic Processes and Bayesian Inference
 install.packages('expm')
 library('expm')
+
+writeLines("==================================")
+writeLines("\n\tAssignment 2\n\tMårten Skogh\n")
+writeLines("==================================")
 
 # Excersize 1.35 ----------------------------
 accidents <- function() {
