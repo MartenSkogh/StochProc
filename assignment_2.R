@@ -171,8 +171,11 @@ for (i in 1:length(range)) {
     theta <- c(range[i], 5.02, 1.15)
     ans[i] <- log_likliehood(x, y, theta)
 }
-plot(range,ans)
-which.max(ans)
+dev.new()
+#par(mfrow=c(3,1))
+plot(range, ans, main=expression(theta[1]), ylab="log likliehood")
+
+theta_max_1 = range[which.max(ans)]
 
 range = seq(0, 10, length=1000)
 ans <- vector(, length(range))
@@ -180,26 +183,28 @@ for (i in 1:length(range)) {
     theta <- c(5.08, range[i], 1.15)
     ans[i] <- log_likliehood(x, y, theta)
 }
-plot(range,ans)
-which.max(ans)
+dev.new()
+plot(range, ans, main=expression(theta[2]), ylab="log likliehood")
+theta_max_2 = range[which.max(ans)]
 
-range = seq(0, 10, length=1000)
+range = seq(0, 1, length=1000)
 ans <- vector(, length(range))
 for (i in 1:length(range)) {
     theta <- c(5.08, 5.02, range[i])
     ans[i] <- log_likliehood(x, y, theta)
 }
-plot(range,ans)
-which.max(ans)
+dev.new()
+plot(range, ans, main=expression(theta[3]), ylab="log likliehood")
+theta_max_3 = range[which.max(ans)]
+
+writeLines(sprintf("Max of log: (%f,%f,%f)", theta_max_1, theta_max_2, theta_max_3))
 
 # 2. (e) -----------------------
-metropolis_hastings <- function(steps) {
+metropolis_hastings <- function(steps, proposal_function) {
     accepted <- 0
     theta <- array(0, dim = c(steps ,3))
     theta[1,] <- c(6, 2 * pi * 0.8, 1) # Initial value
     
-    proposal_function <- function(theta) {abs(theta + rnorm(3, 0, 0.1))}
-
     for (i in 2:steps) {
         # Generate
         proposal_value <- proposal_function(theta[i - 1,])
@@ -215,15 +220,37 @@ metropolis_hastings <- function(steps) {
     return(list(accepted/steps, theta))
 }
 
-steps <- 1000
-a <- metropolis_hastings(steps)
-acc_rate <- a[[1]]
-theta_trace <- a[[2]] 
+proposal_function <- function(theta) {abs(theta + rnorm(3, 0, 0.1))}
 
-plot(theta_trace[,1], type='l', main='Theta_1')
-plot(theta_trace[,2], type='l', main='Theta_2')
-plot(theta_trace[,3], type='l', main='Theta_3')
+steps <- 1000
+acceptance_and_traces <- metropolis_hastings(steps, proposal_function)
+acc_rate <- acceptance_and_traces[[1]]
+theta_trace <- acceptance_and_traces[[2]] 
+
+dev.new()
+plot(theta_trace[,1], type='l', main=expression(theta[1]))
+dev.new()
+plot(theta_trace[,2], type='l', main=expression(theta[2]))
+dev.new()
+plot(theta_trace[,3], type='l', main=expression(theta[3]))
 
 
 # 2. (f) ------------------
 pnorm(0, model(15, c(theta_trace[steps,1], theta_trace[steps,2], 0)), theta_trace[steps,3])
+
+# 2. (g) -------------------
+proposal_function <- function(theta) {
+    proposal_vec <- c(rnorm(1, 0, 0.1), rnorm(1, 0, 0.3), rnorm(1, 0, 0.1))
+    abs(theta + )}
+
+steps <- 1000
+a <- metropolis_hastings(steps, proposal_function)
+acc_rate <- a[[1]]
+theta_trace <- a[[2]] 
+
+dev.new()
+plot(theta_trace[,1], type='l', main=expression(theta[1]))
+dev.new()
+plot(theta_trace[,2], type='l', main=expression(theta[2]))
+dev.new()
+plot(theta_trace[,3], type='l', main=expression(theta[3]))
